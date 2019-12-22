@@ -1,11 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import '../App.css';
-import Card from 'react-bootstrap/Card';
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faMapMarkerAlt } from '@fortawesome/free-solid-svg-icons';
-import BuildingJumbotron from "./BuildingJumbotron";
+import { Link } from 'react-router-dom';
+import axios from "axios";
 
 const BuildingsList = () => {
     useEffect(() => {
@@ -15,35 +11,27 @@ const BuildingsList = () => {
     const [buildings, setBuildings] = useState([]);
 
     const fetchBuildings = async () => {
-        const data = await fetch('http://134.209.138.34/items');
-        const buildings = await data.json();
-        console.log(buildings);
-        setBuildings(buildings);
+        const data = await axios.get('http://134.209.138.34/items');
+        setBuildings(data.data);
     }
 
     return (
-        <React.Fragment>
-            <BuildingJumbotron />
-
-            <Row style={{ margin: '0 auto' }}>
+        <div className="cards">
             {
                 buildings.map(building => {
                     return (
-                        <Col className="mt-4" key={ building.id }>
-                            <Card bg="light" style={{ width: '18rem' }}>
-                                <Card.Img variant="top" src={ building.previewImage } />
-                                <Card.Body>
-                                    <Card.Title>{ building.title }</Card.Title>
-                                    <Card.Subtitle className="mb-2 text-muted">{ building.price }</Card.Subtitle>
-                                    <Card.Text><FontAwesomeIcon icon={ faMapMarkerAlt } /> &nbsp; { building.address }</Card.Text>
-                                </Card.Body>
-                            </Card>
-                        </Col>
+                        <div key={ building.id } className="card">
+                            <Link to={ `/${building.id}` }><img src={ building.previewImage } alt={ building.id }/></Link>
+                            <div className="card__content">
+                                <Link to={ `/${building.id}` }><span>{ building.title }</span></Link>
+                                <h4>{ building.price }</h4>
+                                <p>{ building.address }</p>
+                            </div>
+                        </div>
                     )
                 })
             }
-            </Row>
-        </React.Fragment>
+        </div>
     )
 }
 
